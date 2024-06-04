@@ -1,6 +1,12 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { type ClassValue, clsx } from 'clsx'
+import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
+}
+
+export function resizeTextarea(this: HTMLTextAreaElement) {
+  this.style.height = 'auto'
+  this.style.height = `${this.scrollHeight}px`
+  console.log('resizing', this.scrollHeight, this.style.height)
 }
