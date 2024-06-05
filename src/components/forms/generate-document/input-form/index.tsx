@@ -18,7 +18,7 @@ import {
 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { Textarea } from '../../ui/textarea'
+import { Textarea } from '../../../ui/textarea'
 import { resizeTextarea } from '@/lib/utils'
 import {
   Select,
