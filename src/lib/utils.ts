@@ -8,5 +8,4 @@ export function cn(...inputs: ClassValue[]) {
 export function resizeTextarea(this: HTMLTextAreaElement) {
   this.style.height = 'auto'
   this.style.height = `${this.scrollHeight}px`
-  console.log('resizing', this.scrollHeight, this.style.height)
 }

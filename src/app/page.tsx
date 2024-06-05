@@ -1,10 +1,6 @@
-'use client'
-
-import { SearchBar } from '@/components/browser/search-bar'
-import { useState } from 'react'
+import { Browser } from '@/components/browser'
 
 export default function Home() {
-  const [text, setText] = useState('')
   return (
     <main className="flex min-h-screen flex-col items-center p-24">
       <div className="flex items-center flex-col gap-16">
@@ -22,7 +18,7 @@ export default function Home() {
             soudním řízením a smlouvami!
           </h3>
         </div>
-        <SearchBar text={text} setText={setText} />
+        <Browser />
       </div>
     </main>
   )
