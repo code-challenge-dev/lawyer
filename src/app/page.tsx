@@ -1,8 +1,9 @@
 import GenerateDocument from '@/components/forms/generate-document'
+import SectionDivider from '@/components/section-divider'
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center p-24">
+    <main className="flex min-h-screen flex-col items-center w-full p-12">
       <div className="flex items-center flex-col gap-16">
         <div className="flex flex-col gap-4 text-center font-semibold max-w-[680px] min-h-screen">
           <h2 className="text-4xl">
@@ -18,6 +19,7 @@ export default function Home() {
             soudním řízením a smlouvami!
           </h3>
         </div>
+        <SectionDivider />
         <GenerateDocument />
       </div>
     </main>
