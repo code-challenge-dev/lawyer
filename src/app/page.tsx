@@ -19,6 +19,7 @@ export default function Home() {
           </h3>
         </div>
         <Browser />
+        <div>123213</div>
       </div>
     </main>
   )
