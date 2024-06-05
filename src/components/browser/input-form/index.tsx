@@ -92,7 +92,7 @@ export function InputForm() {
                   Typ dokumentu
                 </Label>
                 <FormControl>
-                  <div className="flex items-center flex-col md:flex-row mt-2 md:justify-between">
+                  <div className="flex items-center flex-col md:flex-row mt-2">
                     <Select
                       value={field.value}
                       onValueChange={(value) => field.onChange(value)}
@@ -112,7 +112,6 @@ export function InputForm() {
                         <SelectItem value="kontrakt">Kontrakt</SelectItem>
                       </SelectContent>
                     </Select>
-                    <UploadButton />
                   </div>
                 </FormControl>
                 <FormMessage />
@@ -184,7 +183,9 @@ export function InputForm() {
               </FormItem>
             )}
           />
-          <div className="flex w-full justify-center">
+
+          <div className="flex w-full justify-between">
+            <UploadButton />
             <Button
               size="sm"
               className="flex rounded-lg w-32 h-12 gap-2 items-center justify-center bg-black dark:text-white dark:hover:text-black text-white hover:bg-white hover:text-black duration-150"

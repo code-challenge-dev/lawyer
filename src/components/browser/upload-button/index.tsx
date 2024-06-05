@@ -78,7 +78,7 @@ export default function UploadButton() {
       }}
     >
       <DialogTrigger asChild>
-        <Button onClick={() => {}}>Upload File</Button>
+        <Button onClick={() => {}}>Důkazní dokumenty</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
