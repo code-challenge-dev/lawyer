@@ -1,21 +1,9 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from '@/components/ui/form'
+import axios from 'axios'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useRef } from 'react'
-import {
-  CircleArrowRightIcon,
-  Loader2,
-  PaperclipIcon,
-  SendHorizontalIcon,
-} from 'lucide-react'
+import { Loader2, PaperclipIcon, SendHorizontalIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Textarea } from '../../../ui/textarea'
@@ -28,17 +16,25 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from '@/components/ui/form'
 import UploadButton from '../upload-button'
 
 const formSchema = z.object({
   document_type: z
     .string()
     .min(1, { message: 'Please provide valid document type.' })
-    .max(20, { message: 'Message should no more than 20 characters.' }),
+    .max(20, { message: 'Please select valid topic.' }),
   topic: z
     .string()
     .min(1, { message: 'Please provide valid topic.' })
-    .max(20, { message: 'Message should no more than 20 characters.' }),
+    .max(100, { message: 'Message should no more than 100 characters.' }),
   params: z
     .string()
     .min(1, { message: 'Please provide valid description of the issue.' })
@@ -70,7 +66,19 @@ export function InputForm() {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+    // const res = await axios.get('api/generation')
+    const response = await axios.post('api/generation', {
+      document_type: values.document_type,
+      topic: values.topic,
+      params: values.params,
+      documents: [
+        {
+          document_name: 'string1',
+          payload: 'string1',
+        },
+      ],
+    })
+    console.log('response', response)
   }
 
   return (
@@ -130,10 +138,10 @@ export function InputForm() {
                   Právní téma
                 </Label>
                 <FormControl>
-                  <div className="flex items-center p-2 md:p-6 bg-primary rounded-lg border bg-gray-100 dark:bg-opacity-80 dark:focus:bg-opacity-100 transition-all dark:outline-none">
+                  <div className="flex items-center p-2 md:p-6 rounded-lg border bg-gray-100 dark:bg-opacity-80 dark:focus:bg-opacity-100 transition-all dark:outline-none">
                     <Textarea
                       className="flex h-full min-h-8 max-h-32 text-xl dark:placeholder:text-gray-600 px-0 py-8 bg-transparent resize-none focus:outline-none focus:border-none focus-visible:outline-none overflow-y-auto dark:text-black"
-                      placeholder="Téma..."
+                      placeholder="Právní téma je..."
                       id="topic"
                       disabled={form.formState.isSubmitting}
                       {...field}
@@ -157,10 +165,10 @@ export function InputForm() {
                   sled událostí
                 </Label>
                 <FormControl>
-                  <div className="flex relative items-center p-2 md:p-6 bg-primary rounded-lg border bg-gray-100 dark:bg-opacity-80 dark:focus:bg-opacity-100 transition-all dark:outline-none">
+                  <div className="flex relative items-center p-2 md:p-6 rounded-lg border bg-gray-100 dark:bg-opacity-80 dark:focus:bg-opacity-100 transition-all dark:outline-none">
                     <Textarea
                       className="min-h-36 max-h-72 text-xl dark:placeholder:text-gray-600 px-0 py-8 bg-transparent resize-none focus:outline-none focus:border-none focus-visible:outline-none overflow-y-auto dark:text-black"
-                      placeholder="Vysvětlit sled událostí..."
+                      placeholder="📎Můj sled událostí začal..."
                       id="params"
                       disabled={form.formState.isSubmitting}
                       {...field}
@@ -186,10 +194,10 @@ export function InputForm() {
 
           <div className="flex flex-col md:flex-row gap-4 md:gap-0 justify-between items-center md:items-start">
             <UploadButton />
-            <div className="bg-white w-full h-[2px] bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
+            <div className="bg-white w-full h-[2px] bg-gradient-to-r from-transparent via-gray-200 to-transparent md:hidden" />
             <Button
               size="sm"
-              className="flex w-full rounded-lg h-12 gap-2 items-center justify-center bg-black dark:text-white dark:hover:text-black text-white hover:bg-white hover:text-black duration-150 border-opacity-0 hover:border-opacity-100 border-2 border-black dark:border-white dark:hover:border-black"
+              className="flex w-full md:w-36 rounded-lg h-12 gap-2 items-center justify-center bg-black dark:text-white dark:hover:text-black text-white hover:bg-white hover:text-black duration-150 border-opacity-0 hover:border-opacity-100 border-2 border-black dark:border-white dark:hover:border-black"
               variant="outline"
               type="submit"
               disabled={form.formState.isSubmitting}
