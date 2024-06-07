@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from 'clsx'
+import { MutableRefObject } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: ClassValue[]) {
@@ -25,4 +26,12 @@ export const errorUtils = {
     }
     return e
   },
+}
+
+export const smoothScrollTo = ({
+  ref,
+}: {
+  ref: MutableRefObject<HTMLElement | null>
+}) => {
+  ref.current?.scrollIntoView()
 }
