@@ -50,7 +50,6 @@ export default function UploadButton() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      console.log(values)
       setIsFileDialogOpen(false)
       form.reset()
 

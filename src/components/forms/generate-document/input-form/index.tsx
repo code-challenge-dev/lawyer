@@ -66,7 +66,6 @@ export function InputForm() {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // const res = await axios.get('api/generation')
     const response = await axios.post('api/generation', {
       document_type: values.document_type,
       topic: values.topic,
