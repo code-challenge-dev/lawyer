@@ -24,6 +24,7 @@ import { useState } from 'react'
 import { useToast } from '@/components/ui/use-toast'
 import { Input } from '@/components/ui/input'
 import { Loader2 } from 'lucide-react'
+import { Label } from '@/components/ui/label'
 
 const formSchema = z.object({
   file: z
@@ -49,7 +50,6 @@ export default function UploadButton() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      console.log(values)
       setIsFileDialogOpen(false)
       form.reset()
 
@@ -78,7 +78,21 @@ export default function UploadButton() {
       }}
     >
       <DialogTrigger asChild>
-        <Button onClick={() => {}}>Přidat důkazní dokumenty</Button>
+        <div className="flex flex-col gap-2 w-full">
+          <Label
+            htmlFor="upload-button"
+            className="text-black md:hidden dark:text-white text-xl font-semibold uppercase px-2 md:px-6"
+          >
+            důkazy
+          </Label>
+          <Button
+            onClick={() => {}}
+            id="upload-button"
+            className="md:w-48 h-12 border border-opacity-0 hover:border-opacity-100 hover:border-primary"
+          >
+            Přidat důkazní dokumenty
+          </Button>
+        </div>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
