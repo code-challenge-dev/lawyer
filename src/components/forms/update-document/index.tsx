@@ -68,13 +68,13 @@ const UpdateDocument = ({ data, setData }: TUpdateDocumentProps) => {
     <>
       <SectionHeading>Opravte dokument</SectionHeading>
       <section className="flex flex-col-reverse gap-4 justify-end lg:justify-center items-center mt-12 mb-4 md:mb-8 w-full min-h-screen">
-        <div className="relative flex m-8 w-full md:w-[720px] lg:w-[1240px]">
+        <div className="relative flex m-8 w-full">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(handleSubmit)}
-              className="flex w-full gap-6 p-6 dark:bg-black rounded-lg flex-col items-center xl:flex-row xl:items-start"
+              className="flex w-full gap-4 p-6 rounded-lg flex-col items-center xl:flex-row xl:items-start"
             >
-              <div className="w-full lg:w-7/12">
+              <div className="w-full xl:w-7/12">
                 <FormField
                   control={form.control}
                   name="response"
@@ -89,7 +89,7 @@ const UpdateDocument = ({ data, setData }: TUpdateDocumentProps) => {
                       <FormControl>
                         <div className="flex relative items-center p-2 md:p-6 rounded-lg border bg-gray-100 dark:bg-opacity-80 dark:focus:bg-opacity-100 transition-all dark:outline-none w-full">
                           <Textarea
-                            className="h-[1400px] w-[700px] text-xl dark:placeholder:text-gray-600 px-0 py-8 bg-transparent resize-none focus:outline-none focus:border-none focus-visible:outline-none overflow-y-auto dark:text-black"
+                            className="h-[1024px] w-[700px] text-xl dark:placeholder:text-gray-600 px-0 py-8 bg-transparent resize-none focus:outline-none focus:border-none focus-visible:outline-none overflow-y-auto dark:text-black"
                             placeholder="Vygenerovaný dokument..."
                             id="response"
                             disabled
@@ -103,7 +103,7 @@ const UpdateDocument = ({ data, setData }: TUpdateDocumentProps) => {
                   )}
                 />
               </div>
-              <div className="flex flex-col gap-4 items-center lg:items-start lg:w-7/12 xl:w-5/12 w-full">
+              <div className="flex flex-col gap-4 items-center lg:items-start xl:w-5/12 w-full">
                 <FormField
                   control={form.control}
                   name="instruction"
