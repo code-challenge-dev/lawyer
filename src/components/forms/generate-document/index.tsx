@@ -227,12 +227,12 @@ function GenerateDocument({ setData }: { setData: any }) {
                   </FormItem>
                 )}
               />
-              <div className="flex flex-col md:flex-row md:justify-between items-center md:items-start">
+              <div className="flex flex-col md:flex-row md:justify-between items-center md:items-start gap-8">
                 <FormField
                   control={form.control}
                   name="documents"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="min-h-[80px] w-full">
                       <FileUpload onUpload={handleFileUpload} />
                       <FormMessage />
                     </FormItem>
