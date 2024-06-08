@@ -86,9 +86,9 @@ function GenerateDocument({ setData }: { setData: any }) {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       console.log('values', values)
-      const response = await axios.post('api/generation', values)
-      console.log('response', response.data)
-      setData(response.data)
+      // const response = await axios.post('api/generation', values)
+      // console.log('response', response.data)
+      // setData(response.data)
 
       toast({
         variant: 'default',
