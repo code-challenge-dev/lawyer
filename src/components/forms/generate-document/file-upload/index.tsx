@@ -67,7 +67,11 @@ const FileUpload = ({
             <div className="space-y-8">
               <FormItem>
                 <FormLabel>File</FormLabel>
-                <Input type="file" accept=".txt" onChange={handleFileChange} />
+                <Input
+                  type="file"
+                  accept="application/pdf, text/plain"
+                  onChange={handleFileChange}
+                />
               </FormItem>
               <Button
                 className="flex gap-1"
