@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const allowedOrigins = [
-  `${process.env.API_ROUTE}/(.*)`,
-  'http://localhost:3000/api/(.*)',
-]
+const allowedOrigins = [`${process.env.API_ROUTE}/(.*)`]
 
 const corsOptions = {
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
@@ -38,5 +35,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: '/api/:path*',
+  matcher: '/api/(.*)',
 }

@@ -56,7 +56,7 @@ const FileUpload = ({
       onOpenChange={(isOpen) => setIsFileDialogOpen(isOpen)}
     >
       <DialogTrigger asChild>
-        <Button className="md:w-48 h-12 border border-opacity-0 hover:border-opacity-100 hover:border-primary">
+        <Button className="md:w-48 h-12 border border-opacity-0 hover:border-opacity-100 hover:border-primary w-full">
           Přidat důkazní dokumenty
         </Button>
       </DialogTrigger>
