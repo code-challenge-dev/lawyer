@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { resizeTextarea, smoothScrollTo } from '@/lib/utils'
+import { resizeTextarea } from '@/lib/utils'
 import {
   Select,
   SelectContent,
@@ -42,6 +42,12 @@ const formSchema = z.object({
     .string()
     .min(1, { message: 'Please provide valid description of the issue.' })
     .max(4096, { message: 'Message should no more than 4096 characters.' }),
+  documents: z.array(
+    z.object({
+      document_name: z.string(),
+      payload: z.string(),
+    })
+  ),
 })
 
 function GenerateDocument({ setData }: { setData: any }) {
@@ -66,6 +72,7 @@ function GenerateDocument({ setData }: { setData: any }) {
       document_type: '',
       topic: '',
       params: '',
+      documents: [],
     },
   })
 
@@ -81,7 +88,7 @@ function GenerateDocument({ setData }: { setData: any }) {
     // })
     // console.log(response.data)
     // setData(response.data)
-    smoothScrollTo({ ref: sectionRef })
+    sectionRef.current?.scrollIntoView()
   }
   return (
     <>
@@ -197,7 +204,24 @@ function GenerateDocument({ setData }: { setData: any }) {
               />
 
               <div className="flex flex-col md:flex-row gap-4 md:gap-0 justify-between items-center md:items-start">
-                <UploadButton />
+                <FormField
+                  control={form.control}
+                  name="documents"
+                  render={({ field }) => (
+                    <FormItem className="min-h-[140px]">
+                      <Label
+                        htmlFor="documents"
+                        className="text-black dark:text-white text-xl font-semibold uppercase px-2 md:px-6"
+                      >
+                        sled událostí
+                      </Label>
+                      <FormControl>
+                        <UploadButton />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormDivider />
                 <SubmitButton
                   isSubmitting={form.formState.isSubmitting}

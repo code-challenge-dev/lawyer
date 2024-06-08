@@ -28,10 +28,11 @@ export const errorUtils = {
   },
 }
 
-export const smoothScrollTo = ({
-  ref,
-}: {
-  ref: MutableRefObject<HTMLElement | null>
-}) => {
-  ref.current?.scrollIntoView()
+const fileToBase64 = (file: File): Promise<string> => {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = () => resolve(reader.result?.toString() || '')
+    reader.onerror = (error) => reject(error)
+  })
 }

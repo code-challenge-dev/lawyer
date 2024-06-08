@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/form'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { resizeTextarea, smoothScrollTo } from '@/lib/utils'
+import { resizeTextarea } from '@/lib/utils'
 import { IGenerateDocumentData } from '@/lib/types'
 import SectionHeading from '@/components/section-heading'
 import SubmitButton from '../submit-button'
