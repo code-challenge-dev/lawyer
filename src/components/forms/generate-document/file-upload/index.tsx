@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { FormItem, FormLabel } from '@/components/ui/form'
 import { useToast } from '@/components/ui/use-toast'
+import { fileTypes } from '@/lib/utils'
 
 const FileUpload = ({
   onUpload,
@@ -23,7 +24,8 @@ const FileUpload = ({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0]
-    if (selectedFile && selectedFile.type === 'text/plain') {
+
+    if (selectedFile && fileTypes.some((type) => type === selectedFile.type)) {
       setFile(selectedFile)
     } else {
       setFile(null)

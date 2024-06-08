@@ -36,3 +36,5 @@ export const fileToBase64 = (file: File): Promise<string> => {
     reader.onerror = (error) => reject(error)
   })
 }
+
+export const fileTypes = ['application/pdf', 'text/plain']

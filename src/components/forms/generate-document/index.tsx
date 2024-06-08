@@ -86,9 +86,9 @@ function GenerateDocument({ setData }: { setData: any }) {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       console.log('values', values)
-      // const response = await axios.post('api/generation', values)
-      // console.log('response', response.data)
-      // setData(response.data)
+      const response = await axios.post('api/generation', values)
+      console.log('response', response.data)
+      setData(response.data)
 
       toast({
         variant: 'default',
@@ -119,7 +119,7 @@ function GenerateDocument({ setData }: { setData: any }) {
     <>
       <SectionHeading>Vygenerovat dokument</SectionHeading>
       <section
-        className="flex flex-col lg:flex-row-reverse gap-4 justify-center lg:items-start items-center mt-12 mb-4 md:mb-8 w-full min-h-screen scroll-mt-[-1400px] lg:scroll-mt-[-1250px]"
+        className="flex flex-col lg:flex-row-reverse gap-4 justify-center lg:items-start items-center mt-12 mb-4 md:mb-8 w-full min-h-screen scroll-mt-[-1400px] lg:scroll-mt-[-1350px]"
         ref={sectionRef}
       >
         <Image
@@ -234,6 +234,7 @@ function GenerateDocument({ setData }: { setData: any }) {
                   render={({ field }) => (
                     <FormItem>
                       <FileUpload onUpload={handleFileUpload} />
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
