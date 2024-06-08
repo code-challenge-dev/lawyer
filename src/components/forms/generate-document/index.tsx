@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { resizeTextarea, smoothScrollTo } from '@/lib/utils'
+import { resizeTextarea } from '@/lib/utils'
 import {
   Select,
   SelectContent,
@@ -23,31 +23,44 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Textarea } from '@/components/ui/textarea'
-import UploadButton from './upload-button'
 import FormDivider from '../form-divider'
 import SectionDivider from '@/components/section-divider'
 import SubmitButton from '../submit-button'
 import SectionHeading from '@/components/section-heading'
+import { useToast } from '@/components/ui/use-toast'
+import FileUpload from './file-upload'
 
 const formSchema = z.object({
   document_type: z
     .string()
-    .min(1, { message: 'Please provide valid document type.' })
-    .max(20, { message: 'Please select valid topic.' }),
+    .min(1, { message: 'Uveďte prosím platný typ dokumentu.' })
+    .max(20, { message: 'Vyberte prosím platné téma.' }),
   topic: z
     .string()
-    .min(1, { message: 'Please provide valid topic.' })
-    .max(256, { message: 'Message should no more than 256 characters.' }),
+    .min(1, { message: 'Zadejte prosím platné téma.' })
+    .max(512, { message: 'Zpráva by neměla mít více než 512 znaků.' }),
   params: z
     .string()
-    .min(1, { message: 'Please provide valid description of the issue.' })
-    .max(4096, { message: 'Message should no more than 4096 characters.' }),
+    .min(1, { message: 'Uveďte prosím platný popis problému.' })
+    .max(5120, { message: 'Zpráva by neměla mít více než 5120 znaků.' }),
+  documents: z
+    .array(
+      z.object({
+        document_name: z
+          .string()
+          .min(1, { message: 'Název dokumentu je povinný.' }),
+        payload: z.string(),
+      })
+    )
+    .min(1, { message: 'Je vyžadován alespoň jeden textový dokument.' }),
 })
 
 function GenerateDocument({ setData }: { setData: any }) {
   const paramsRef = useRef<HTMLTextAreaElement | null>(null)
   const topicRef = useRef<HTMLTextAreaElement | null>(null)
   const sectionRef = useRef<HTMLElement | null>(null)
+
+  const { toast } = useToast()
 
   useEffect(() => {
     const params = paramsRef.current
@@ -66,23 +79,42 @@ function GenerateDocument({ setData }: { setData: any }) {
       document_type: '',
       topic: '',
       params: '',
+      documents: [],
     },
   })
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    // const response = await axios.post('api/generation', {
-    //   ...values,
-    //   documents: [
-    //     {
-    //       document_name: 'string1',
-    //       payload: 'string1',
-    //     },
-    //   ],
-    // })
-    // console.log(response.data)
-    // setData(response.data)
-    smoothScrollTo({ ref: sectionRef })
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      console.log('values', values)
+      // const response = await axios.post('api/generation', values)
+      // console.log('response', response.data)
+      // setData(response.data)
+
+      toast({
+        variant: 'default',
+        title: 'Dokument byl úspěšně vygenerován!',
+        description: 'Nyní můžete spravovat svůj dokument zadáním pokynů.',
+      })
+
+      form.reset()
+      sectionRef.current?.scrollIntoView()
+    } catch (err) {
+      toast({
+        variant: 'destructive',
+        title: 'Jejda! Něco se pokazilo!',
+        description:
+          'Při generování vašeho dokumentu došlo k chybě, zkuste to prosím později.',
+      })
+    }
   }
+
+  const handleFileUpload = (file: {
+    document_name: string
+    payload: string
+  }) => {
+    form.setValue('documents', [...form.getValues('documents'), file])
+  }
+
   return (
     <>
       <SectionHeading>Vygenerovat dokument</SectionHeading>
@@ -129,10 +161,10 @@ function GenerateDocument({ setData }: { setData: any }) {
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="žaloba">Žaloba</SelectItem>
-                            <SelectItem value="předžalobní výzva">
-                              Předžalobní Výzva
+                            <SelectItem value="odvolání">Odvolání</SelectItem>
+                            <SelectItem value="projednání">
+                              Projednání
                             </SelectItem>
-                            <SelectItem value="kontrakt">Kontrakt</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -155,9 +187,9 @@ function GenerateDocument({ setData }: { setData: any }) {
                     <FormControl>
                       <div className="flex items-center p-2 md:p-4 rounded-lg border bg-gray-100 dark:bg-opacity-80 dark:focus:bg-opacity-100 transition-all dark:outline-none">
                         <Textarea
-                          className="flex h-full min-h-8 max-h-32 text-xl dark:placeholder:text-gray-600 px-0 py-8 bg-transparent resize-none focus:outline-none focus:border-none focus-visible:outline-none overflow-y-auto dark:text-black"
-                          placeholder="Právní téma je..."
                           id="topic"
+                          className="flex h-full min-h-8 max-h-32 text-xl dark:placeholder:text-gray-600 px-0 py-8 bg-transparent resize-none focus:outline-none focus:border-none focus-visible:outline-none overflow-y-auto dark:text-black"
+                          placeholder="Stručně popište, o čem váš dokument je."
                           disabled={form.formState.isSubmitting}
                           {...field}
                           ref={topicRef}
@@ -180,10 +212,10 @@ function GenerateDocument({ setData }: { setData: any }) {
                       sled událostí
                     </Label>
                     <FormControl>
-                      <div className="flex relative items-center p-2 md:p-4 rounded-lg border bg-gray-100 dark:bg-opacity-80 dark:focus:bg-opacity-100 transition-all dark:outline-none">
+                      <div className="flex items-center p-2 md:p-4 rounded-lg border bg-gray-100 dark:bg-opacity-80 dark:focus:bg-opacity-100 transition-all dark:outline-none">
                         <Textarea
-                          className="min-h-36 max-h-[640px] text-xl dark:placeholder:text-gray-600 px-0 py-8 bg-transparent resize-none focus:outline-none focus:border-none focus-visible:outline-none overflow-y-auto dark:text-black"
-                          placeholder="📎Můj sled událostí začal..."
+                          className="flex h-full min-h-8 max-h-80 text-xl dark:placeholder:text-gray-600 px-0 py-8 bg-transparent resize-none focus:outline-none focus:border-none focus-visible:outline-none overflow-y-auto dark:text-black"
+                          placeholder="Uveďte podrobnosti o vašem dokumentu."
                           id="params"
                           disabled={form.formState.isSubmitting}
                           {...field}
@@ -195,9 +227,16 @@ function GenerateDocument({ setData }: { setData: any }) {
                   </FormItem>
                 )}
               />
-
-              <div className="flex flex-col md:flex-row gap-4 md:gap-0 justify-between items-center md:items-start">
-                <UploadButton />
+              <div className="flex flex-col md:flex-row md:justify-between items-center md:items-start">
+                <FormField
+                  control={form.control}
+                  name="documents"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FileUpload onUpload={handleFileUpload} />
+                    </FormItem>
+                  )}
+                />
                 <FormDivider />
                 <SubmitButton
                   isSubmitting={form.formState.isSubmitting}
