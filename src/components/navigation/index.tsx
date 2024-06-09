@@ -76,7 +76,7 @@ const Navigation = () => {
           <Scale className="group-hover:text-primary/80 duration-100 transition-colors" />
         </Link>
       </aside>
-      <nav className="gap-4 justify-between font-semibold w-5/12 hidden md:flex text-primary">
+      <nav className="gap-4 justify-center font-semibold w-5/12 hidden md:flex text-primary">
         <Link
           href="#about"
           className="w-20 text-center hover:text-primary/80 duration-100 transition-colors"
