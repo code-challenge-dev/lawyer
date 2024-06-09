@@ -67,8 +67,11 @@ const UpdateDocument = ({ data, setData }: TUpdateDocumentProps) => {
   return (
     <>
       <SectionHeading>Opravte dokument</SectionHeading>
-      <section className="flex flex-col-reverse gap-4 justify-end lg:justify-center items-center mt-12 mb-4 md:mb-8 w-full min-h-screen">
-        <div className="relative flex m-8 w-full md:w-[720px] lg:w-[1240px]">
+      <section
+        id="update-document"
+        className="flex flex-col-reverse gap-4 justify-end lg:justify-center items-center mb-4 md:mb-8 w-full min-h-screen scroll-mt-48"
+      >
+        <div className="relative flex m-8 w-full md:w-[720px] lg:w-[1040px]">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(handleSubmit)}
@@ -141,7 +144,7 @@ const UpdateDocument = ({ data, setData }: TUpdateDocumentProps) => {
           src="/text-field.svg"
           width={400}
           height={400}
-          className="flex opacity-95 h-[300px] w-[300px] lg:w-[400px] lg:h-[400px]"
+          className="flex opacity-95 h-[300px] w-[300px]"
           alt="Judge illustration"
         />
       </section>

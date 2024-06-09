@@ -11,7 +11,7 @@ export default function Home() {
     {} as IGenerateDocumentData
   )
   return (
-    <main className="flex min-h-screen flex-col items-center w-full p-4 gap-4 md:gap-10 lg:gap-12">
+    <main className="flex flex-col items-center w-full p-4 gap-4 md:gap-10 lg:gap-12">
       <HeroPage />
       <GenerateDocument setData={setData} />
       <UpdateDocument data={data} setData={setData} />
