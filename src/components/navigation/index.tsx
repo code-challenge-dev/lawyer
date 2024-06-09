@@ -71,9 +71,15 @@ const Navigation = () => {
           </Command>
         </SheetContent>
       </Sheet>
+<<<<<<< HEAD
       <aside className="w-44 hidden md:flex">
         <Link href="/">
           <Scale className="hover:text-primary/80 duration-100 transition-colors" />
+=======
+      <aside className="items-center gap-2 w-44 hidden md:flex">
+        <Link href="/" className="group flex gap-2 items-center">
+          <Scale className="group-hover:text-primary/80 duration-100 transition-colors" />
+>>>>>>> fba665b1a0d88c77786282e3542f751a9c746bc0
         </Link>
       </aside>
       <nav className="gap-4 justify-center font-semibold w-5/12 hidden md:flex text-primary">
