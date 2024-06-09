@@ -72,6 +72,7 @@ const FileUpload = ({
                 <Input
                   type="file"
                   accept="application/pdf, text/plain"
+                  className="cursor-pointer"
                   onChange={handleFileChange}
                 />
               </FormItem>

@@ -64,8 +64,8 @@ const HeroPage = () => {
                 Jaké typy dokumentů mohu generovat?
               </AccordionTrigger>
               <AccordionContent>
-                Můžete generovat tři typy právních dokumentů: Žaloby, Odvolání a
-                Projednání.{' '}
+                Můžete generovat dva typy právních dokumentů: Žaloby a
+                Předsoudní odvolání.{' '}
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-5">

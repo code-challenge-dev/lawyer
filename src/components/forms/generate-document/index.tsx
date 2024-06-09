@@ -52,7 +52,7 @@ const formSchema = z.object({
         payload: z.string(),
       })
     )
-    .min(1, { message: 'Je vyžadován alespoň jeden textový dokument.' }),
+    .optional(),
 })
 
 function GenerateDocument({ setData }: { setData: any }) {
@@ -109,7 +109,8 @@ function GenerateDocument({ setData }: { setData: any }) {
     document_name: string
     payload: string
   }) => {
-    form.setValue('documents', [...form.getValues('documents'), file])
+    const documents = form.getValues('documents') || []
+    form.setValue('documents', [...documents, file])
   }
 
   return (
@@ -185,7 +186,7 @@ function GenerateDocument({ setData }: { setData: any }) {
                         <Textarea
                           id="topic"
                           className="flex h-full min-h-8 max-h-32 text-xl dark:placeholder:text-gray-600 px-0 py-8 bg-transparent resize-none focus:outline-none focus:border-none focus-visible:outline-none overflow-y-auto dark:text-black"
-                          placeholder="Stručně popište, o čem váš dokument je."
+                          placeholder="Jaké je meritum věci?"
                           disabled={form.formState.isSubmitting}
                           {...field}
                           ref={topicRef}
@@ -211,7 +212,7 @@ function GenerateDocument({ setData }: { setData: any }) {
                       <div className="flex items-center p-2 md:p-4 rounded-lg border bg-gray-100 dark:bg-opacity-80 dark:focus:bg-opacity-100 transition-all dark:outline-none">
                         <Textarea
                           className="flex h-full min-h-8 max-h-80 text-xl dark:placeholder:text-gray-600 px-0 py-8 bg-transparent resize-none focus:outline-none focus:border-none focus-visible:outline-none overflow-y-auto dark:text-black"
-                          placeholder="Uveďte podrobnosti o vašem dokumentu."
+                          placeholder="Uveďte podrobnosti o vašem právním případu."
                           id="params"
                           disabled={form.formState.isSubmitting}
                           {...field}
