@@ -62,11 +62,13 @@ const FileUpload = ({
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="mb-8">Upload your file here.</DialogTitle>
+          <DialogTitle className="mb-8">
+            Zde nahrajte svůj dokument.
+          </DialogTitle>
           <DialogDescription>
             <div className="space-y-8">
               <FormItem>
-                <FormLabel>File</FormLabel>
+                <FormLabel>Soubor</FormLabel>
                 <Input type="file" accept=".txt" onChange={handleFileChange} />
               </FormItem>
               <Button
@@ -74,7 +76,7 @@ const FileUpload = ({
                 onClick={handleUpload}
                 disabled={!file}
               >
-                Upload
+                Nahrát
               </Button>
             </div>
           </DialogDescription>
