@@ -85,9 +85,7 @@ function GenerateDocument({ setData }: { setData: any }) {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      console.log('values', values)
       const response = await axios.post('api/generation', values)
-      console.log('response', response.data)
       setData(response.data)
 
       toast({
@@ -161,9 +159,8 @@ function GenerateDocument({ setData }: { setData: any }) {
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="žaloba">Žaloba</SelectItem>
-                            <SelectItem value="odvolání">Odvolání</SelectItem>
-                            <SelectItem value="projednání">
-                              Projednání
+                            <SelectItem value="předžalobní výzva">
+                              Předžalobní výzva
                             </SelectItem>
                           </SelectContent>
                         </Select>
