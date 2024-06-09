@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { resizeTextarea } from '@/lib/utils'
+import { resizeTextarea, smoothScrollTo } from '@/lib/utils'
 import {
   Select,
   SelectContent,
@@ -58,7 +58,6 @@ const formSchema = z.object({
 function GenerateDocument({ setData }: { setData: any }) {
   const paramsRef = useRef<HTMLTextAreaElement | null>(null)
   const topicRef = useRef<HTMLTextAreaElement | null>(null)
-  const sectionRef = useRef<HTMLElement | null>(null)
 
   const { toast } = useToast()
 
@@ -85,19 +84,17 @@ function GenerateDocument({ setData }: { setData: any }) {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      console.log('values', values)
-      const response = await axios.post('api/generation', values)
-      console.log('response', response.data)
-      setData(response.data)
+      // const response = await axios.post('api/generation', values)
+      // setData(response.data)
 
-      toast({
-        variant: 'default',
-        title: 'Dokument byl úspěšně vygenerován!',
-        description: 'Nyní můžete spravovat svůj dokument zadáním pokynů.',
-      })
+      // toast({
+      //   variant: 'default',
+      //   title: 'Dokument byl úspěšně vygenerován!',
+      //   description: 'Nyní můžete spravovat svůj dokument zadáním pokynů.',
+      // })
 
-      form.reset()
-      sectionRef.current?.scrollIntoView()
+      // form.reset()
+      smoothScrollTo('update-document')
     } catch (err) {
       toast({
         variant: 'destructive',
@@ -119,11 +116,11 @@ function GenerateDocument({ setData }: { setData: any }) {
     <>
       <SectionHeading>Vygenerovat dokument</SectionHeading>
       <section
-        className="flex flex-col lg:flex-row-reverse gap-4 justify-center lg:items-start items-center mt-12 mb-4 md:mb-8 w-full min-h-screen scroll-mt-[-1400px] lg:scroll-mt-[-1350px]"
-        ref={sectionRef}
+        id="generate-document"
+        className="flex flex-col lg:flex-row-reverse gap-4 justify-center lg:items-start items-center mt-12 mb-4 md:mb-8 w-full min-h-screen scroll-mt-60"
       >
         <Image
-          src="/empty.svg"
+          src="/judge.svg"
           width={500}
           height={500}
           className="flex opacity-95 h-[300px] w-[300px] lg:w-[400px] lg:h-[400px]"

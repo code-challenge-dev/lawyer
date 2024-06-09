@@ -37,4 +37,11 @@ export const fileToBase64 = (file: File): Promise<string> => {
   })
 }
 
+export const smoothScrollTo = (id: string) => {
+  const element = document.getElementById(id) as HTMLElement
+  element?.scrollIntoView({
+    block: 'start',
+  })
+}
+
 export const fileTypes = ['application/pdf', 'text/plain']
