@@ -27,8 +27,8 @@ import { Textarea } from '@/components/ui/textarea'
 import {
   convertFromHtml,
   convertToHtml,
-  errorUtils,
   resizeTextarea,
+  smoothScrollTo,
 } from '@/lib/utils'
 import { IGenerateDocumentData } from '@/lib/types'
 import SectionHeading from '@/components/section-heading'
@@ -36,6 +36,7 @@ import SubmitButton from '../submit-button'
 import { Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
+import clsx from 'clsx'
 
 type TUpdateDocumentProps = {
   data: IGenerateDocumentData
@@ -55,6 +56,7 @@ const formSchema = z.object({
 
 const UpdateDocument = ({ data, setData }: TUpdateDocumentProps) => {
   const instructionRef = useRef<HTMLTextAreaElement | null>(null)
+  const formRef = useRef<HTMLFormElement | null>(null)
   const [selection, setSelection] = useState<string>()
   const [position, setPosition] = useState<Record<string, number>>()
 
@@ -94,17 +96,52 @@ const UpdateDocument = ({ data, setData }: TUpdateDocumentProps) => {
     })
   }, [])
 
+  const handleOnClick = useCallback((event: MouseEvent) => {
+    if (formRef.current && !event.composedPath().includes(formRef.current)) {
+      setPosition(undefined)
+    }
+  }, [])
+
+  const handleOnKeyDown = useCallback((event: KeyboardEvent) => {
+    if (event.key === 'Escape' || event.code === 'Escape') {
+      setPosition(undefined)
+    }
+  }, [])
+
   useEffect(() => {
     const instruction = instructionRef.current
     instruction?.addEventListener('input', resizeTextarea, false)
     form.setValue('generated_text', data.response)
-    document.addEventListener('mouseup', onSelectEnd)
     return () => {
       instruction?.removeEventListener('input', resizeTextarea, false)
-
-      document.removeEventListener('mouseup', onSelectEnd)
     }
-  }, [data, form, onSelectEnd])
+  }, [data, form])
+
+  useEffect(() => {
+    const handleMouseUp = () => {
+      if (form.formState.isSubmitting) return
+      onSelectEnd()
+    }
+
+    if (!form.formState.isSubmitting) {
+      document.addEventListener('mouseup', handleMouseUp)
+    } else {
+      document.removeEventListener('mouseup', handleMouseUp)
+    }
+
+    return () => {
+      document.removeEventListener('mouseup', handleMouseUp)
+    }
+  }, [form.formState.isSubmitting, onSelectEnd])
+
+  useEffect(() => {
+    document.body.addEventListener('click', handleOnClick)
+    document.body.addEventListener('keydown', handleOnKeyDown)
+    return () => {
+      document.body.removeEventListener('click', handleOnClick)
+      document.body.removeEventListener('keydown', handleOnKeyDown)
+    }
+  }, [handleOnClick, handleOnKeyDown])
 
   async function handleSubmit(values: z.infer<typeof formSchema>) {
     try {
@@ -118,9 +155,15 @@ const UpdateDocument = ({ data, setData }: TUpdateDocumentProps) => {
         title: 'Dokument byl úspěšně aktualizován!',
         description: 'Nyní můžete dávat další pokyny.',
       })
+
+      form.reset({
+        instruction: '',
+      })
+      setSelection(undefined)
+
       setData(response.data)
+      smoothScrollTo('update-document')
     } catch (error) {
-      errorUtils.getError(error)
       toast({
         variant: 'destructive',
         title: 'Jejda! Něco se pokazilo!',
@@ -164,6 +207,7 @@ const UpdateDocument = ({ data, setData }: TUpdateDocumentProps) => {
             <form
               onSubmit={form.handleSubmit(handleSubmit)}
               className="flex w-full gap-6 p-6 dark:bg-black rounded-lg flex-col items-center xl:flex-row xl:items-start"
+              ref={formRef}
             >
               <div className="w-full lg:w-7/12">
                 <FormField
@@ -180,8 +224,16 @@ const UpdateDocument = ({ data, setData }: TUpdateDocumentProps) => {
                       <FormControl>
                         <div
                           id="generated_text"
+                          className={clsx(
+                            'p-2 md:p-6 rounded-lg border bg-gray-100 dark:bg-opacity-80 dark:focus:bg-opacity-100 transition-all dark:outline-none w-full',
+                            {
+                              'cursor-not-allowed select-none':
+                                form.formState.isSubmitting,
+                              'user-select': !form.formState.isSubmitting,
+                            }
+                          )}
+                          aria-disabled={form.formState.isSubmitting}
                           {...field}
-                          className="p-2 md:p-6 rounded-lg border bg-gray-100 dark:bg-opacity-80 dark:focus:bg-opacity-100 transition-all dark:outline-none w-full select-text"
                           dangerouslySetInnerHTML={{ __html: responseTextHTML }}
                         />
                       </FormControl>
@@ -205,7 +257,7 @@ const UpdateDocument = ({ data, setData }: TUpdateDocumentProps) => {
                       <FormControl>
                         <div className="flex relative items-center p-2 md:p-6 rounded-lg border w-full bg-gray-100 dark:bg-opacity-80 dark:focus:bg-opacity-100 transition-all dark:outline-none">
                           <Textarea
-                            className="min-h-36 h-[720px] w-[700px] text-xl dark:placeholder:text-gray-600 px-0 py-8 bg-transparent resize-none focus:outline-none focus:border-none focus-visible:outline-none overflow-y-auto dark:text-black "
+                            className="min-h-36 h-[720px] w-[700px] text-xl dark:placeholder:text-gray-600 px-0 py-8 bg-transparent resize-none focus:outline-none focus:border-none focus-visible:outline-none overflow-y-auto dark:text-black"
                             placeholder="Všechno"
                             id="paragraph"
                             disabled={form.formState.isSubmitting}

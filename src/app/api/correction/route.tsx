@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { errorUtils } from '@/lib/utils'
 import { THTTPMethod } from '@/lib/types'
+import { toast } from '@/components/ui/use-toast'
 
 export const POST: THTTPMethod = async (req, res) => {
   try {
@@ -16,6 +16,10 @@ export const POST: THTTPMethod = async (req, res) => {
 
     return new Response(JSON.stringify(response.data))
   } catch (error) {
-    errorUtils.getError(error)
+    toast({
+      variant: 'destructive',
+      title: 'Jejda! Něco se pokazilo!',
+      description: 'Při odesílání požadavku POST došlo k chybě.',
+    })
   }
 }
