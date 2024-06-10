@@ -5,6 +5,7 @@ import React, {
   SetStateAction,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react'
@@ -12,6 +13,7 @@ import axios from 'axios'
 import Image from 'next/image'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
+import DOMPurify from 'isomorphic-dompurify'
 import { z } from 'zod'
 import {
   Form,
@@ -22,13 +24,18 @@ import {
 } from '@/components/ui/form'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { resizeTextarea } from '@/lib/utils'
+import {
+  convertFromHtml,
+  convertToHtml,
+  errorUtils,
+  resizeTextarea,
+} from '@/lib/utils'
 import { IGenerateDocumentData } from '@/lib/types'
 import SectionHeading from '@/components/section-heading'
 import SubmitButton from '../submit-button'
 import { Check } from 'lucide-react'
-import { Toaster } from 'sonner'
 import { Button } from '@/components/ui/button'
+import { useToast } from '@/components/ui/use-toast'
 
 type TUpdateDocumentProps = {
   data: IGenerateDocumentData
@@ -36,11 +43,13 @@ type TUpdateDocumentProps = {
 }
 
 const formSchema = z.object({
-  response: z.string({ message: 'Please provide valid response.' }),
+  generated_text: z
+    .string({ message: 'Uveďte prosím platnou odpověď.' })
+    .min(50, { message: 'Odpověď by měla mít alespoň 50 znaků.' }),
   instruction: z
     .string()
-    .min(1, { message: 'Please provide valid instructions.' })
-    .max(2096, { message: 'Message should no more than 2096 characters.' }),
+    .min(1, { message: 'Uveďte prosím platný pokyn.' })
+    .max(2096, { message: 'Odpověď by měla mít alespoň 2096 znaků.' }),
   paragraph: z.string(),
 })
 
@@ -49,27 +58,27 @@ const UpdateDocument = ({ data, setData }: TUpdateDocumentProps) => {
   const [selection, setSelection] = useState<string>()
   const [position, setPosition] = useState<Record<string, number>>()
 
+  const { toast } = useToast()
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      response: '',
+      generated_text: '',
       instruction: '',
       paragraph: '',
     },
   })
 
-  console.log('state', selection, position)
-
-  const onSelectStart = useCallback(() => {
-    setSelection(undefined)
-  }, [])
+  const responseTextHTML = useMemo(
+    () => DOMPurify.sanitize(convertToHtml(data.response)),
+    [data.response]
+  )
 
   const onSelectEnd = useCallback(() => {
     const activeSelection = document.getSelection()
     const text = activeSelection?.toString()
 
     if (!activeSelection || !text) {
-      setSelection(undefined)
       return
     }
 
@@ -88,32 +97,43 @@ const UpdateDocument = ({ data, setData }: TUpdateDocumentProps) => {
   useEffect(() => {
     const instruction = instructionRef.current
     instruction?.addEventListener('input', resizeTextarea, false)
-    form.setValue('response', data.response)
-    document.addEventListener('selectstart', onSelectStart)
+    form.setValue('generated_text', data.response)
     document.addEventListener('mouseup', onSelectEnd)
     return () => {
       instruction?.removeEventListener('input', resizeTextarea, false)
 
-      document.removeEventListener('selectstart', onSelectStart)
       document.removeEventListener('mouseup', onSelectEnd)
     }
-  }, [data, form, onSelectStart, onSelectEnd])
+  }, [data, form, onSelectEnd])
 
   async function handleSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
-    // const response = await axios.post('api/correction', {
-    //   ...values,
-    //   paragraph: 'Právní důvody žaloby',
-    // })
-    // console.log(response.data)
-    // setData(response.data)
+    try {
+      const responseTextMarkdown = convertFromHtml(selection)
+      const response = await axios.post('api/correction', {
+        ...values,
+        paragraph: responseTextMarkdown,
+      })
+      toast({
+        variant: 'default',
+        title: 'Dokument byl úspěšně aktualizován!',
+        description: 'Nyní můžete dávat další pokyny.',
+      })
+      setData(response.data)
+    } catch (error) {
+      errorUtils.getError(error)
+      toast({
+        variant: 'destructive',
+        title: 'Jejda! Něco se pokazilo!',
+        description:
+          'Při aktualizaci vašeho dokumentu došlo k chybě, zkuste to prosím znovu později.',
+      })
+    }
   }
 
   return (
     <>
       <SectionHeading>Opravte dokument</SectionHeading>
       <div role="dialog" aria-labelledby="share">
-        <Toaster position="bottom-center" />
         {selection && position && (
           <p
             className="
@@ -124,7 +144,10 @@ const UpdateDocument = ({ data, setData }: TUpdateDocumentProps) => {
               transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
             }}
           >
-            <Button className="flex w-full h-full justify-between items-center px-2 cursor-default">
+            <Button
+              className="flex w-full h-full justify-between items-center px-2"
+              onClick={() => setPosition(undefined)}
+            >
               <span id="share" className="text-xs">
                 <Check />
               </span>
@@ -134,7 +157,7 @@ const UpdateDocument = ({ data, setData }: TUpdateDocumentProps) => {
       </div>
       <section
         id="update-document"
-        className="flex flex-col-reverse gap-4 justify-end lg:justify-center items-center mb-4 md:mb-8 w-full min-h-screen scroll-mt-48"
+        className="flex flex-col-reverse gap-4 justify-end lg:justify-center items-center mb-4 md:mb-8 w-full min-h-screen scroll-mt-56"
       >
         <div className="relative flex m-8 w-full md:w-[720px] lg:w-[1040px]">
           <Form {...form}>
@@ -145,26 +168,22 @@ const UpdateDocument = ({ data, setData }: TUpdateDocumentProps) => {
               <div className="w-full lg:w-7/12">
                 <FormField
                   control={form.control}
-                  name="response"
+                  name="generated_text"
                   render={({ field }) => (
                     <FormItem className="min-h-[140px] w-full">
                       <Label
-                        htmlFor="response"
+                        htmlFor="generated_text"
                         className="text-black dark:text-white text-xl font-semibold uppercase px-2 md:px-6"
                       >
                         Vygenerovaný dokument
                       </Label>
                       <FormControl>
-                        <div className="flex relative items-center p-2 md:p-6 rounded-lg border bg-gray-100 dark:bg-opacity-80 dark:focus:bg-opacity-100 transition-all dark:outline-none w-full">
-                          <Textarea
-                            className="h-[1400px] w-[700px] text-xl dark:placeholder:text-gray-600 px-0 py-8 bg-transparent resize-none focus:outline-none focus:border-none focus-visible:outline-none overflow-y-auto dark:text-black"
-                            placeholder="Vygenerovaný dokument..."
-                            id="response"
-                            disabled
-                            defaultValue={data.response}
-                            {...field}
-                          />
-                        </div>
+                        <div
+                          id="generated_text"
+                          {...field}
+                          className="p-2 md:p-6 rounded-lg border bg-gray-100 dark:bg-opacity-80 dark:focus:bg-opacity-100 transition-all dark:outline-none w-full select-text"
+                          dangerouslySetInnerHTML={{ __html: responseTextHTML }}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -174,7 +193,7 @@ const UpdateDocument = ({ data, setData }: TUpdateDocumentProps) => {
               <div className="flex flex-col gap-4 items-center lg:items-start lg:w-7/12 xl:w-5/12 w-full">
                 <FormField
                   control={form.control}
-                  name="instruction"
+                  name="paragraph"
                   render={({ field }) => (
                     <FormItem className="min-h-[140px] w-full">
                       <Label
@@ -186,7 +205,7 @@ const UpdateDocument = ({ data, setData }: TUpdateDocumentProps) => {
                       <FormControl>
                         <div className="flex relative items-center p-2 md:p-6 rounded-lg border w-full bg-gray-100 dark:bg-opacity-80 dark:focus:bg-opacity-100 transition-all dark:outline-none">
                           <Textarea
-                            className="min-h-36 max-h-[440px] w-[700px] text-xl dark:placeholder:text-gray-600 px-0 py-8 bg-transparent resize-none focus:outline-none focus:border-none focus-visible:outline-none overflow-y-auto dark:text-black"
+                            className="min-h-36 h-[720px] w-[700px] text-xl dark:placeholder:text-gray-600 px-0 py-8 bg-transparent resize-none focus:outline-none focus:border-none focus-visible:outline-none overflow-y-auto dark:text-black "
                             placeholder="Všechno"
                             id="paragraph"
                             disabled={form.formState.isSubmitting}
@@ -216,7 +235,7 @@ const UpdateDocument = ({ data, setData }: TUpdateDocumentProps) => {
                           <Textarea
                             className="min-h-36 max-h-[440px] w-[700px] text-xl dark:placeholder:text-gray-600 px-0 py-8 bg-transparent resize-none focus:outline-none focus:border-none focus-visible:outline-none overflow-y-auto dark:text-black"
                             placeholder="Moje instrukce jsou další..."
-                            id="instructions"
+                            id="instruction"
                             disabled={form.formState.isSubmitting}
                             {...field}
                             ref={instructionRef}

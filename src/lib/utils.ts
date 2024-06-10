@@ -1,5 +1,4 @@
 import { type ClassValue, clsx } from 'clsx'
-import { MutableRefObject } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: ClassValue[]) {
@@ -24,7 +23,7 @@ export const errorUtils = {
     } else {
       e = 'Unknown error occured'
     }
-    return e
+    console.error(e)
   },
 }
 
@@ -42,6 +41,28 @@ export const smoothScrollTo = (id: string) => {
   element?.scrollIntoView({
     block: 'start',
   })
+}
+
+export const convertToHtml = (text: string) => {
+  if (!text) {
+    return ''
+  }
+
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\[([^\]]+)\]/g, '<span class="placeholder">$1</span>')
+    .replace(/\n/g, '<br/>')
+}
+
+export const convertFromHtml = (html: string | undefined) => {
+  if (!html) {
+    return ''
+  }
+
+  return html
+    .replace(/<strong>(.*?)<\/strong>/g, '**$1**')
+    .replace(/<span class="placeholder">(.*?)<\/span>/g, '[$1]')
+    .replace(/<br\/>/g, '\n')
 }
 
 export const fileTypes = ['application/pdf', 'text/plain']

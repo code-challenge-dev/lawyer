@@ -27,6 +27,6 @@ export const POST: THTTPMethod = async (req, res) => {
 
     return new Response(JSON.stringify(response.data))
   } catch (error) {
-    return errorUtils.getError(error)
+    errorUtils.getError(error)
   }
 }
