@@ -86,7 +86,7 @@ function GenerateDocument({ setData }: { setData: any }) {
     try {
       const response = await axios.post('api/generation', values)
       setData(response.data)
-
+      console.log(response.data)
       toast({
         variant: 'default',
         title: 'Dokument byl úspěšně vygenerován!',
