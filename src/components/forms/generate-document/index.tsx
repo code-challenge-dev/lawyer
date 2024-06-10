@@ -92,7 +92,6 @@ function GenerateDocument({ setData }: { setData: any }) {
         description: 'Nyní můžete spravovat svůj dokument zadáním pokynů.',
       })
 
-      form.reset()
       smoothScrollTo('update-document')
     } catch (err) {
       toast({
