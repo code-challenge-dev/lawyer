@@ -178,7 +178,7 @@ const UpdateDocument = ({ data, setData }: TUpdateDocumentProps) => {
       <SectionHeading>Opravte dokument</SectionHeading>
       <div role="dialog" aria-labelledby="share">
         {selection && position && (
-          <p
+          <div
             className="
             absolute -top-2 left-0 w-[40px] h-[30px] bg-black text-white rounded m-0 z-[999]
             after:absolute after:top-full after:left-1/2 after:-translate-x-2 after:h-0 after:w-0 after:border-x-[6px] after:border-x-transparent after:border-b-[8px] after:border-b-black after:rotate-180
@@ -195,7 +195,7 @@ const UpdateDocument = ({ data, setData }: TUpdateDocumentProps) => {
                 <Check />
               </span>
             </Button>
-          </p>
+          </div>
         )}
       </div>
       <section

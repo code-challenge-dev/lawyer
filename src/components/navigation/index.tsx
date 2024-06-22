@@ -1,25 +1,18 @@
-'use client'
+"use client"
 
-import React, { useState } from 'react'
-import { Menu, Scale } from 'lucide-react'
-import Link from 'next/link'
-import { ModeToggle } from '../theme/mode-toggle'
+import React, { useState } from "react"
+import { Menu, Scale } from "lucide-react"
+import Link from "next/link"
+import { ModeToggle } from "../theme/mode-toggle"
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet'
-import { Button } from '../ui/button'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '../ui/command'
+} from "@/components/ui/sheet"
+import { Button } from "../ui/button"
+import { Command, CommandGroup, CommandItem, CommandList } from "../ui/command"
 
 const Navigation = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false)
@@ -31,7 +24,7 @@ const Navigation = () => {
     <div className="p-3 flex items-center justify-between border-b z-10 backdrop-blur-[0.5rem] border-opacity-40 bg-opacity-80 fixed top-0 w-full uppercase">
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <SheetTrigger asChild className="z-[100] md:!hidden flex">
-          <Button variant="outline" size={'icon'}>
+          <Button variant="outline" size={"icon"}>
             <Menu />
           </Button>
         </SheetTrigger>
@@ -98,7 +91,7 @@ const Navigation = () => {
       </nav>
       <aside className="flex gap-2 items-center w-44 justify-end">
         <ModeToggle />
-      </aside>{' '}
+      </aside>{" "}
     </div>
   )
 }
